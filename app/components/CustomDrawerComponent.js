@@ -1,11 +1,29 @@
 import { View, Text, StyleSheet, Image } from "react-native";
-import React from "react";
+import React, { useEffect, useState } from "react";
 import {
   DrawerContentScrollView,
+  DrawerItem,
   DrawerItemList,
 } from "@react-navigation/drawer";
+import { theme } from "@/constants/theme";
+import { Feather, FontAwesome } from "@expo/vector-icons";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CustomDrawerComponent = (props) => {
+  const [user, setUser] = useState(null);
+  const {navigation}=props;
+  console.log(navigation);
+
+  const logout=()=>{
+    AsyncStorage.clear();
+    navigation.navigate("login")
+  }
+
+  useEffect(() => {
+    AsyncStorage.getItem("userdetails").then((value) =>
+      setUser(JSON.parse(value))
+    );
+  }, []);
 
   return (
     <View style={{ flex: 1 }}>
@@ -17,12 +35,40 @@ const CustomDrawerComponent = (props) => {
               source={require("../../assets/images/profile.png")}
             />
           </View>
-          <Text style={styles.profileName}>Subhradip Nath</Text>
-          <Text style={styles.designation}>Junior Software Developer</Text>
+          <Text style={styles.profileName}>
+            {user?.fName} {user?.lName}
+          </Text>
+          <Text style={styles.designation}>{user?.designation}</Text>
         </View>
-        <View style={{ flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: "#fff", marginHorizontal: 15, marginBottom: 10 }} />
+        <View
+          style={{
+            flex: 1,
+            height: StyleSheet.hairlineWidth,
+            backgroundColor: "#fff",
+            marginHorizontal: 15,
+            marginBottom: 10,
+          }}
+        />
         <DrawerItemList {...props} />
-        {/* <DrawerItem  label="Logout" onPress={()=>router.push('/app/index')} activeBackgroundColor={theme.colors.white} inactiveTintColor={theme.colors.white} activeTintColor={theme.colors.black}/> */}
+        <View
+          style={{
+            flex: 1,
+            height: StyleSheet.hairlineWidth,
+            backgroundColor: "#fff",
+            marginHorizontal: 15,
+            marginBottom: 10,
+          }}
+        />
+        <DrawerItem
+          label="Logout"
+          onPress={logout}
+          activeBackgroundColor={theme.colors.white}
+          inactiveTintColor="#C7253E"
+          activeTintColor={theme.colors.black}
+          icon={({ color }) => (
+            <Feather name="log-out" size={24} color={color} />
+          )}
+        />
       </DrawerContentScrollView>
     </View>
   );

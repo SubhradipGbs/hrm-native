@@ -1,14 +1,42 @@
-import { View, Text } from "react-native";
-import { menuData } from "../../constants/menuData";
-import React from "react";
+import { View, Text, Alert } from "react-native";
+import React, { useEffect } from "react";
 import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawerComponent from "../components/CustomDrawerComponent";
 import MyStack from "../MyStack/MyStack";
 import { theme } from "@/constants/theme";
+import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Drawer = createDrawerNavigator();
 
-const MainLayout = () => {
+const MainLayout = ({route,navigation}) => {
+  const {menuItems}=route.params;
+
+  
+
+  useEffect(()=>{
+    navigation.addListener('beforeRemove',(e)=>{
+
+      // Prevent default behavior of leaving the screen
+      e.preventDefault();
+
+      // Prompt the user before leaving the screen
+      Alert.alert(
+        'Logout',
+        'You sure want to logout?',
+        [
+          { text: "Don't leave", style: 'cancel', onPress: () => {} },
+          {
+            text: 'Logout',
+            style: 'destructive',
+            // If the user confirmed, then we dispatch the action we blocked earlier
+            // This will continue the action that had triggered the removal of the screen
+            onPress: () => navigation.dispatch(e.data.action),
+          },
+        ]
+      );
+    })
+  },[])
+
   return (
     <Drawer.Navigator
       drawerContent={CustomDrawerComponent}
@@ -26,7 +54,7 @@ const MainLayout = () => {
         },
       }}
     >
-      {menuData.map((item) => (
+      {menuItems.map((item) => (
         <Drawer.Screen
           key={item._id}
           name={item.name}

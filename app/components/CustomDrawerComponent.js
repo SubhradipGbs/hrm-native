@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, Image } from "react-native";
+import { View, Text, StyleSheet, Image, Alert } from "react-native";
 import React, { useEffect, useState } from "react";
 import {
   DrawerContentScrollView,
@@ -6,18 +6,28 @@ import {
   DrawerItemList,
 } from "@react-navigation/drawer";
 import { theme } from "@/constants/theme";
-import { Feather, FontAwesome } from "@expo/vector-icons";
+import {Feather} from "@expo/vector-icons";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const CustomDrawerComponent = (props) => {
   const [user, setUser] = useState(null);
-  const {navigation}=props;
-  console.log(navigation);
+  const { navigation } = props;
 
-  const logout=()=>{
+  const goToLogout = () => {
     AsyncStorage.clear();
     navigation.navigate("login")
-  }
+  };
+
+  const logout = () => {
+    Alert.alert("Logout", "Sure to logout?", [
+      { text: "Cancel", style: "cancel", onPress: () => {} },
+      {
+        text: "Logout",
+        style: "destructive",
+        onPress: goToLogout,
+      },
+    ]);
+  };
 
   useEffect(() => {
     AsyncStorage.getItem("userdetails").then((value) =>

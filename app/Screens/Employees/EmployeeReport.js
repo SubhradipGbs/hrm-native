@@ -1,12 +1,190 @@
-import { View, Text } from 'react-native'
-import React from 'react'
+import React, { useState, useEffect } from "react";
+import {
+  View,
+  FlatList,
+  Text,
+  StyleSheet,
+  TextInput,
+  TouchableOpacity,
+} from "react-native";
+import Icon from "react-native-vector-icons/FontAwesome";
+import { getEmployeeDetails } from "../../../services/api";
 
 const EmployeeReport = () => {
-  return (
-    <View>
-      <Text>EmployeeReport</Text>
-    </View>
-  )
-}
+  const [data, setData] = useState([]);
+  const [filteredData, setFilteredData] = useState([]);
+  const [searchText, setSearchText] = useState("");
 
-export default EmployeeReport
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await getEmployeeDetails();
+        setData(response.data);
+        setFilteredData(response.data);
+      } catch (error) {
+        console.error("Error fetching data:", error);
+      }
+    };
+    fetchData();
+  }, []);
+
+  const handleSearch = (text) => {
+    setSearchText(text);
+    const filtered = data.filter((item) =>
+      `${item.fName} ${item.lName}`.toLowerCase().includes(text.toLowerCase())
+    );
+    setFilteredData(filtered);
+  };
+
+  const handleDownloadAll = () => {
+    const downloadData = filteredData;
+  };
+
+  const formatDate = (dateString) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, "0");
+    const month = (date.getMonth() + 1).toString().padStart(2, "0");
+    const year = date.getFullYear();
+    return `${day}-${month}-${year}`;
+  };
+
+  const renderItem = ({ item }) => (
+    <>
+      <View style={styles.card}>
+        <Text style={styles.title}>Name: {`${item.fName} ${item.lName}`}</Text>
+        <View style={styles.dobContainer}>
+          <Icon name="id-card" size={18} color="#666" style={styles.dobIcon} />
+          <Text style={styles.dobText}>Mobile No:</Text>
+          <Text>{item.userMobileNo}</Text>
+        </View>
+        <View style={styles.dobContainer}>
+          <Icon name="envelope" size={18} color="#666" style={styles.dobIcon} />
+          <Text style={styles.dobText}>Email:</Text>
+          <Text>{item.email}</Text>
+        </View>
+        <View style={styles.dobContainer}>
+          <Icon
+            name="birthday-cake"
+            size={18}
+            color="#666"
+            style={styles.dobIcon}
+          />
+          <Text style={styles.dobText}>
+            Date of Birth:
+          </Text>
+          <Text>{formatDate(item.dob)}</Text>
+        </View>
+
+        <View style={styles.dobContainer}>
+          <Icon name="id-card" size={18} color="#666" style={styles.dobIcon} />
+          <Text style={styles.dobText}>PAN No:</Text>
+          <Text>{item.panNo}</Text>
+        </View>
+        <View style={styles.dobContainer}>
+          <Icon name="id-card" size={18} color="#666" style={styles.dobIcon} />
+          <Text style={styles.dobText}>
+            Aadhaar No:
+          </Text>
+          <Text>{item.aaddharNo || "N/A"}</Text>
+        </View>
+        {/* <Text>{`${item.parmanentAddress}`}</Text>
+                {item.parmanentAddress.map((field, fieldIndex) => (
+                    <Text>{`${field.address} ${field.city}`}</Text>
+                ))}  */}
+      </View>
+    </>
+  );
+
+  return (
+    <View style={styles.container}>
+      <TextInput
+        style={styles.searchInput}
+        placeholder="Search..."
+        value={searchText}
+        onChangeText={handleSearch}
+      />
+      <FlatList
+        data={filteredData}
+        renderItem={renderItem}
+        keyExtractor={(item) => item._id.toString()}
+      />
+      <TouchableOpacity
+        onPress={handleDownloadAll}
+        style={styles.downloadAllButton}
+      >
+        <Text style={styles.downloadAllButtonText}>Download All</Text>
+      </TouchableOpacity>
+    </View>
+  );
+};
+
+const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 16,
+  },
+  searchInput: {
+    height: 40,
+    borderWidth: 1,
+    borderColor: "#ccc",
+    borderRadius: 4,
+    paddingHorizontal: 8,
+    marginBottom: 16,
+  },
+  card: {
+    backgroundColor: "#fff",
+    borderRadius: 8,
+    padding: 16,
+    marginBottom: 16,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
+  },
+  title: {
+    fontSize: 18,
+    fontWeight: "bold",
+    marginBottom: 8,
+  },
+  downloadAllButton: {
+    backgroundColor: "blue",
+    padding: 12,
+    borderRadius: 8,
+    alignItems: "center",
+    marginTop: 16,
+  },
+  downloadAllButtonText: {
+    color: "#fff",
+    fontWeight: "bold",
+  },
+  emailContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+  },
+  emailLabel: {
+    fontWeight: "bold",
+  },
+  emailAddress: {
+    color: "blue",
+  },
+  dobContainer: {
+    flexDirection: "row",
+    alignItems: "center",
+    marginBottom: 8,
+    gap:10,
+  },
+  dobIcon: {
+    marginRight: 8,
+  },
+  dobText: {
+    // color: 'green',
+    fontWeight: "bold",
+  },
+});
+
+export default EmployeeReport;

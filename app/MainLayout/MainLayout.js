@@ -4,22 +4,15 @@ import { createDrawerNavigator } from "@react-navigation/drawer";
 import CustomDrawerComponent from "../components/CustomDrawerComponent";
 import MyStack from "../MyStack/MyStack";
 import { theme } from "@/constants/theme";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 
 const Drawer = createDrawerNavigator();
 
 const MainLayout = ({route,navigation}) => {
   const {menuItems}=route.params;
 
-  
-
   useEffect(()=>{
     navigation.addListener('beforeRemove',(e)=>{
-
-      // Prevent default behavior of leaving the screen
       e.preventDefault();
-
-      // Prompt the user before leaving the screen
       Alert.alert(
         'Logout',
         'You sure want to logout?',
@@ -28,8 +21,6 @@ const MainLayout = ({route,navigation}) => {
           {
             text: 'Logout',
             style: 'destructive',
-            // If the user confirmed, then we dispatch the action we blocked earlier
-            // This will continue the action that had triggered the removal of the screen
             onPress: () => navigation.dispatch(e.data.action),
           },
         ]
@@ -71,7 +62,7 @@ export default MainLayout;
 
 const MyScreen = () => {
   return (
-    <View>
+    <View style={{padding:10}}>
       <Text>My Screen</Text>
     </View>
   );

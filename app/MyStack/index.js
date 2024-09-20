@@ -5,9 +5,9 @@ import { theme } from "../../constants/theme";
 const Home = ({ route, navigation }) => {
   const { item } = route.params;
   function getRandomPastelColor() {
-    const r = Math.floor(Math.random() * 100 + 50);
-    const g = Math.floor(Math.random() * 100 + 50);
-    const b = Math.floor(Math.random() * 100 + 50);
+    const r = Math.floor((Math.random() * 100)+ 50);
+    const g = Math.floor((Math.random() * 100) + 50);
+    const b = Math.floor((Math.random() * 100) + 50);
 
     const toHex = (value) => value.toString(16).padStart(2, "0");
 

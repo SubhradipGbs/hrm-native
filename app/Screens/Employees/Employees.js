@@ -9,7 +9,6 @@ import {
   ActivityIndicator,
 } from "react-native";
 import { getAllEmployees } from "../../../services/api";
-import Icon from "react-native-vector-icons/FontAwesome";
 import { theme } from "@/constants/theme";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
 
@@ -98,7 +97,7 @@ export default function Employees() {
           )}
           keyExtractor={(item) => item._id}
           showsVerticalScrollIndicator={false}
-          
+          contentContainerStyle={{gap:10,paddingHorizontal:12,paddingTop:10,paddingBottom:20}}
         />
       )}
     </View>
@@ -108,9 +107,9 @@ export default function Employees() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    alignItems: "center",
+    width: "100%",
+    height: "100%",
     justifyContent: "center",
-    paddingVertical: 10,
   },
   card: {
     flexDirection: "row",
@@ -120,8 +119,6 @@ const styles = StyleSheet.create({
     borderColor: "#ddd",
     borderRadius: 4,
     backgroundColor: theme.colors.white,
-    marginBottom: 10,
-    marginHorizontal: 10,
     padding: 16,
     borderRadius: 8,
     shadowColor: "#000",

@@ -15,9 +15,9 @@ const MainLayout = ({route,navigation}) => {
       e.preventDefault();
       Alert.alert(
         'Logout',
-        'You sure want to logout?',
+        'Sure to logout?',
         [
-          { text: "Don't leave", style: 'cancel', onPress: () => {} },
+          { text: "Cancel", style: 'cancel', onPress: () => {} },
           {
             text: 'Logout',
             style: 'destructive',

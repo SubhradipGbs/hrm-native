@@ -71,7 +71,7 @@ const CustomDrawerComponent = (props) => {
         />
         <DrawerItem
           label="Logout"
-          onPress={logout}
+          onPress={goToLogout}
           activeBackgroundColor={theme.colors.white}
           inactiveTintColor="#C7253E"
           activeTintColor={theme.colors.black}

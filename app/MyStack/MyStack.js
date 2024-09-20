@@ -2,14 +2,14 @@ import React from "react";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import ManageLeave from "@/app/Screens/Leave/ManageLeave";
 import NewLayout from "./NewLayout";
-import LeaveType from '@/app/Screens/Leave/LeaveType';
-import Employees from '@/app/Screens/Employees/Employees';
-import EmployeeReport from '@/app/Screens/Employees/EmployeeReport';
-import Clients from '@/app/Screens/Company/Clients';
-import Company from '@/app/Screens/Company/Company';
-import Projects from '@/app/Screens/Time/Projects';
-import Timesheet from '@/app/Screens/Time/Timesheet';
-
+import LeaveType from "@/app/Screens/Leave/LeaveType";
+import Employees from "@/app/Screens/Employees/Employees";
+import EmployeeReport from "@/app/Screens/Employees/EmployeeReport";
+import Clients from "@/app/Screens/Company/Clients";
+import Company from "@/app/Screens/Company/Company";
+import Projects from "@/app/Screens/Time/Projects";
+import Timesheet from "@/app/Screens/Time/Timesheet";
+import ViewTimesheet from "@/app/Screens/Time/ViewTimesheet";
 
 const Stack = createNativeStackNavigator();
 
@@ -61,6 +61,11 @@ const MyStack = ({ route }) => {
       <Stack.Screen
         name="/timesheet"
         component={Timesheet}
+        options={{ title: "Projects" }}
+      />
+      <Stack.Screen
+        name="/view-timesheet"
+        component={ViewTimesheet}
         options={{ title: "Projects" }}
       />
     </Stack.Navigator>

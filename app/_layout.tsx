@@ -12,7 +12,7 @@ export default function RootLayout() {
     <NavigationContainer independent={true}>
       <Stack.Navigator screenOptions={{headerShown:false}}>
         <Stack.Screen name="login" component={Login} />
-        <Stack.Screen name="home" component={MainLayout} />
+        <Stack.Screen name="home" component={MainLayout} options={{}} />
       </Stack.Navigator>
     </NavigationContainer>
   );

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, Fragment } from "react";
 import {
   View,
   ScrollView,
@@ -105,7 +105,7 @@ const Projects = () => {
         <View style={styles.modalContainer}>
           <View style={styles.modalContent}>
             {getProjectdata ? (
-              <React.Fragment>
+              <>
                 <View style={styles.modalHeader}>
                   <Text style={styles.modalTitle}>
                     {getProjectdata.projectName}
@@ -148,7 +148,7 @@ const Projects = () => {
                     <Text>No assigned users found</Text>
                   )}
                 </ScrollView>
-              </React.Fragment>
+              </>
             ) : (
               <Text>No project details available</Text>
             )}

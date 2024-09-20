@@ -6,12 +6,11 @@ import { AntDesign } from "@expo/vector-icons";
 const NewLayout = ({ navigation, route }) => {
   const { item } = route.params;
   function getRandomPastelColor() {
-    const r = Math.floor((Math.random() * 100) + 100);
-    const g = Math.floor((Math.random() * 100) + 100);
+    const r = Math.floor((Math.random() * 100) + 80);
+    const g = Math.floor((Math.random() * 100) + 50);
     const b = Math.floor((Math.random() * 100) + 100);
 
     const toHex = (value) => value.toString(16).padStart(2, "0");
-
     return `#${toHex(r)}${toHex(g)}${toHex(b)}`;
   }
   return (
@@ -34,7 +33,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 10,
-    gap: 5,
+    gap: 10,
   },
 
   item: {
@@ -43,6 +42,15 @@ const styles = StyleSheet.create({
     alignItems: "center",
     paddingHorizontal: 20,
     height: 80,
+    borderRadius: 8,
+    shadowColor: "#000",
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.25,
+    shadowRadius: 3.84,
+    elevation: 5,
   },
   title: {
     color: theme.colors.white,

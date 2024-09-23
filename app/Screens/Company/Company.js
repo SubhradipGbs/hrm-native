@@ -158,7 +158,7 @@ const styles = StyleSheet.create({
   addButton:{
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor: "#1E3163",
+    backgroundColor: theme.colors.primary,
     paddingHorizontal: 16,
     paddingVertical: 12,
     borderRadius: 8,

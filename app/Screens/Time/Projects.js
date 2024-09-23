@@ -3,14 +3,16 @@ import {
   View,
   ScrollView,
   StyleSheet,
-  ActivityIndicator,
   Text,
   Modal,
   TouchableOpacity,
+  FlatList,
 } from "react-native";
 import { TextInput } from "react-native-gesture-handler";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 import { fetchProjectData, fetchProjectDetails } from "../../../services/api";
+import { theme } from "@/constants/theme";
+import { FontAwesome } from "@expo/vector-icons";
 
 const Projects = () => {
   const [getdata, setData] = useState([]);
@@ -60,6 +62,37 @@ const Projects = () => {
     setModalVisible(!modalVisible);
   };
 
+  const ProjectCard = ({ item, toggleModal }) => {
+    return (
+      <TouchableOpacity
+        style={styles.card}
+        activeOpacity={0.8}
+        onPress={() => toggleModal(item)}
+      >
+        <View style={styles.cardContent}>
+          <View style={styles.cardDetails}>
+            <Text style={styles.cardTitle}>{item.projectName}</Text>
+
+            <View style={styles.infoRow}>
+              <FontAwesome name="code" size={16} color={theme.colors.gray} />
+              <Text style={styles.cardText}>
+                Project Code: {item.projectCode}
+              </Text>
+            </View>
+            <View style={styles.infoRow}>
+              <FontAwesome name="building" size={16} color={theme.colors.gray} />
+              <Text style={styles.cardText}>
+                Department: {item.departments.dptName}
+              </Text>
+            </View>
+          </View>
+
+          <Icon name="chevron-right" size={28} color="#4F8EF7" />
+        </View>
+      </TouchableOpacity>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <TextInput
@@ -69,7 +102,7 @@ const Projects = () => {
         onChangeText={setSearchQuery}
         placeholderTextColor="#999"
       />
-      {filteredData.length === 0 ? (
+      {/* {filteredData.length === 0 ? (
         <Text style={styles.emptyText}>No projects found</Text>
       ) : (
         <ScrollView contentContainerStyle={styles.scrollContainer}>
@@ -94,7 +127,14 @@ const Projects = () => {
             </TouchableOpacity>
           ))}
         </ScrollView>
-      )}
+      )} */}
+
+      <FlatList
+        data={filteredData}
+        keyExtractor={(item) => item._id}
+        renderItem={ProjectCard}
+        contentContainerStyle={{ gap: 10 }}
+      />
 
       <Modal
         visible={modalVisible}
@@ -163,7 +203,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 16,
-    backgroundColor: "#fff",
   },
   searchInput: {
     height: 40,
@@ -172,33 +211,44 @@ const styles = StyleSheet.create({
     borderRadius: 4,
     paddingHorizontal: 10,
     marginBottom: 16,
-  },
-  scrollContainer: {
-    justifyContent: "center",
+    backgroundColor: theme.colors.white,
   },
   card: {
-    backgroundColor: "#f5f5f5",
-    borderRadius: 8,
-    marginBottom: 16,
-    elevation: 2,
+    backgroundColor: "#fff",
+    borderRadius: 12,
+    padding: 16,
+    marginVertical: 5,
+    marginHorizontal: 5,
+    shadowColor: "#000",
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.15,
+    shadowRadius: 6,
+    elevation: 5,
   },
   cardContent: {
     flexDirection: "row",
-    justifyContent: "space-between",
     alignItems: "center",
-    padding: 16,
+    justifyContent: "space-between",
   },
   cardDetails: {
     flex: 1,
+    marginRight: 10,
   },
   cardTitle: {
     fontSize: 18,
-    fontWeight: "bold",
+    fontWeight: "600",
+    color: "#333",
+    marginBottom: 8,
+  },
+  infoRow: {
+    flexDirection: "row",
+    alignItems: "center",
     marginBottom: 4,
   },
   cardText: {
-    fontSize: 16,
-    color: "#333",
+    fontSize: 14,
+    color: "#666",
+    marginLeft: 8,
   },
   modalContainer: {
     flex: 1,

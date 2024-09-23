@@ -7,6 +7,7 @@ import Employees from "@/app/Screens/Employees/Employees";
 import EmployeeReport from "@/app/Screens/Employees/EmployeeReport";
 import Clients from "@/app/Screens/Company/Clients";
 import Company from "@/app/Screens/Company/Company";
+import Masters from "@/app/Screens/Company/Masters";
 import Projects from "@/app/Screens/Time/Projects";
 import Timesheet from "@/app/Screens/Time/Timesheet";
 import ViewTimesheet from "@/app/Screens/Time/ViewTimesheet";
@@ -52,6 +53,11 @@ const MyStack = ({ route }) => {
         name="/company"
         component={Company}
         options={{ title: "Company Structure" }}
+      />
+      <Stack.Screen
+        name="/masters"
+        component={Masters}
+        options={{ title: "Masters" }}
       />
       <Stack.Screen
         name="/projects"

@@ -9,7 +9,13 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
-import { login, setToken, getUserDetails, getSideMenu } from '../../../services/api';
+import {
+  login,
+  setToken,
+  getUserDetails,
+  getSideMenu,
+} from "../../../services/api";
+import backgroundImg from "@/assets/images/background.png";
 
 const Login = ({ navigation }) => {
   const [username, setUsername] = useState("admingbs@gbsit.co.in");
@@ -25,7 +31,10 @@ const Login = ({ navigation }) => {
         await AsyncStorage.setItem("token", "Bearer " + token_value);
         await AsyncStorage.setItem("assignUser", user_id);
         const username = await getUserDetails(user_id);
-        await AsyncStorage.setItem("userdetails", JSON.stringify(username?.data));
+        await AsyncStorage.setItem(
+          "userdetails",
+          JSON.stringify(username?.data)
+        );
         const menuItems = await getSideMenu();
         navigation.navigate("home", { menuItems: menuItems.data });
       } else {
@@ -38,42 +47,47 @@ const Login = ({ navigation }) => {
   };
 
   return (
-    <View style={styles.container}>
-      <Image source={require("../../../assets/images/logo.png")} style={styles.logo} />
+    <ImageBackground source={backgroundImg} style={styles.backgroundImage}>
+      <View style={styles.container}>
+        <Image
+          source={require("../../../assets/images/logo.png")}
+          style={styles.logo}
+        />
 
-      <Text style={styles.welcomeText}>Welcome to myHRM</Text>
-      {/* <Text style={styles.title}>Login</Text> */}
-      <TextInput
-        style={styles.input}
-        placeholder="Username"
-        value={username}
-        onChangeText={setUsername}
-      />
-      <TextInput
-        style={styles.input}
-        placeholder="Password"
-        secureTextEntry
-        value={password}
-        onChangeText={setPassword}
-        backgroundColor={"rgba(255, 255, 255, 0.5)"}
-      />
-      <TouchableOpacity style={styles.button} onPress={handleLogin}>
-        <Text style={styles.buttonText}>Login</Text>
-      </TouchableOpacity>
-    </View>
+        <Text style={styles.welcomeText}>Welcome to myHRM</Text>
+        {/* <Text style={styles.title}>Login</Text> */}
+        <TextInput
+          style={styles.input}
+          placeholder="Username"
+          value={username}
+          onChangeText={setUsername}
+        />
+        <TextInput
+          style={styles.input}
+          placeholder="Password"
+          secureTextEntry
+          value={password}
+          onChangeText={setPassword}
+          backgroundColor={"rgba(255, 255, 255, 0.5)"}
+        />
+        <TouchableOpacity style={styles.button} onPress={handleLogin}>
+          <Text style={styles.buttonText}>Login</Text>
+        </TouchableOpacity>
+      </View>
+    </ImageBackground>
   );
 };
 
 const styles = StyleSheet.create({
-  //   backgroundImage: {
-  //     flex: 1,
-  //     resizeMode: 'cover',
-  //     width: '100%',
-  //     height: '100%',
-  //     justifyContent: 'center',
-  //   },
-  container: {
+  backgroundImage: {
     flex: 1,
+    resizeMode: "cover",
+    width: "100%",
+    height: "100%",
+    justifyContent: "center",
+  },
+  container: {
+    // flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },

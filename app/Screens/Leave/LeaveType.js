@@ -2,31 +2,48 @@ import { View, Text, StyleSheet, Touchable, TouchableOpacity, Modal, TextInput, 
 import React, { useEffect, useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import { theme } from "@/constants/theme";
-import { fetchLeaveType } from "@/services/api";
+import { addLeaveType, fetchLeaveType } from "@/services/api";
 import { AntDesign, FontAwesome, Ionicons } from "@expo/vector-icons";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
+import { useToast } from "react-native-toast-notifications";
 
 const LeaveType = () => {
   const [leaves, setLeaves] = useState([]);
+  const queryClient=useQueryClient();
+  const toast=useToast();
+  const [modalShown,setModalShown]=useState(false);
   const [newLeaveType, setNewLeaveType] = useState({
     leaveTypeName: "",
     shortName: "",
   });
+
+  const {isLoading,error,data}=useQuery({
+    queryKey:['leaveType'],
+    queryFn:fetchLeaveType,
+    select:(data)=> data.data
+  })
+
+  const mutation =useMutation({
+    mutationFn:addLeaveType,
+    onSuccess:()=>{
+      queryClient.invalidateQueries(['leaveType']);
+      setModalShown(false);
+      toast.show('Successfully added',{type:'success'});
+    },
+  })
   
-  const [modalShown,setModalShown]=useState(false);
-  useEffect(() => {
-    const fetchLeaveTypes = async () => {
-      try {
-        const response = await fetchLeaveType();
-        setLeaves(response.data);
-      } catch (err) {
-        console.error("Error fetching data:", err);
-      }
-    };
-    fetchLeaveTypes();
-  }, []);
+  const handleInputChange = (name, value) => {
+    setNewLeaveType({ ...newLeaveType, [name]: value });
+  };
 
 
-
+  const handleSubmit=()=>{
+    if(!!newLeaveType.leaveTypeName && !!newLeaveType.leaveTypeName){
+      mutation.mutate(newLeaveType);
+    }else{
+      toast.show("Enter values",{type:'success'})
+    }
+  }
 
   const LeaveCard = ({ item }) => (
     <View style={styles.card}>
@@ -46,7 +63,7 @@ const LeaveType = () => {
         </TouchableOpacity>
       </View>
       <FlatList
-        data={leaves}
+        data={data}
         renderItem={LeaveCard}
         keyExtractor={(item) => item._id}
       />
@@ -62,18 +79,18 @@ const LeaveType = () => {
             <TextInput
               style={styles.input}
               placeholder="Leave Type"
-              onChangeText={(text) => handleInputChange("clientName", text)}
+              onChangeText={(text) => handleInputChange("leaveTypeName", text)}
               value={newLeaveType.leaveTypeName}
             />
             <TextInput
               style={styles.input}
               placeholder="Short Name"
-              onChangeText={(text) => handleInputChange("clientAddress", text)}
+              onChangeText={(text) => handleInputChange("shortName", text)}
               value={newLeaveType.shortName}
             />
           </View>
           <View style={styles.modalFooter}>
-            <TouchableOpacity style={[styles.modalButtons,{backgroundColor:theme.colors.primary}]}>
+            <TouchableOpacity style={[styles.modalButtons,{backgroundColor:theme.colors.primary}]} onPress={handleSubmit}>
               <Text style={styles.modalButtonText}>Add Type</Text>
             </TouchableOpacity>
             <TouchableOpacity style={[styles.modalButtons,{backgroundColor:theme.colors.danger}]}>

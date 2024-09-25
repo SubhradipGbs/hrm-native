@@ -4,7 +4,7 @@ export const mainStyle = StyleSheet.create({
   modalContainer: {
     flex: 1,
     justifyContent: "center",
-    backgroundColor: "rgba(0, 0, 0, 0.5)", // Semi-transparent background
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
     padding: 20,
   },
   modalHeader: {

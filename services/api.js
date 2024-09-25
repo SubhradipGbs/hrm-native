@@ -129,8 +129,6 @@ const getLeaveData = async () => {
       fiscalyear = today.getFullYear() + "-" + (today.getFullYear() + 1)
     }
     const userId = await AsyncStorage.getItem('assignUser');
-    const response = await api.post("/leaves/get-leave-balance", { "financialYear": fiscalyear, "assignUser": userId });
-    setmyLeaveData(response.data.data);
   } catch (error) {
     console.error('Error fetching data:', error);
   }
@@ -145,12 +143,30 @@ const fetchLeaveType = async () => {
   }
 };
 
+const addLeaveType = async(obj)=>{
+  try{
+    const response=await api.post('/leaves/add-leave-type',obj);
+    return response.data;
+  }catch(err){
+    console.log(err);
+  }
+}
+
 const getLeaveStatus = async () => {
   try {
     const response = await api.post("/leaves/get-leave-status", {});
     return response.data;
   } catch (error) {
     console.error('Error fetching data:', error);
+  }
+};
+
+const leaveApproval = async (obj) => {
+  try {
+      const response = await api.post("/leaves/leave-approval",obj);
+      return response.data;
+  } catch (error) {
+      console.error('Error fetching data:', error);
   }
 };
 
@@ -240,8 +256,10 @@ const get_mypayslip = async (obj) => {
   }
 };
 
+
+
 export {
   api, setToken, login, getUserDetails, getSideMenu, getDashboardDetails, getEmployeeDetails,
   getAllEmployees, getClients, getCompanyBranch, getcompanyData, geteducationData, getLanguageData,
   getLeaveData, fetchLeaveType, getLeaveStatus, fetchProjectData, fetchProjectDetails, getProjectsAll,
-  getTimesheetData, getProjects, getExpenseData ,getMyexpense ,getPayroll_logs , get_mypayslip };
+  getTimesheetData, getProjects, getExpenseData ,getMyexpense ,getPayroll_logs , get_mypayslip,leaveApproval,addLeaveType };

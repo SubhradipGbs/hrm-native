@@ -2,26 +2,69 @@ import React, { useState, useEffect } from "react";
 import {
   View,
   Text,
-  Button,
   FlatList,
   StyleSheet,
-  ImageBackground,
   TouchableOpacity,
   Modal,
   TextInput,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialIcons";
-import { getCompanyBranch } from "../../../services/api";
+import { addCompanyBranch, getCompanyBranch } from "../../../services/api";
 import { theme } from "@/constants/theme";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { FontAwesome } from "@expo/vector-icons";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useToast } from "react-native-toast-notifications";
 
 const Company = () => {
+  const toast = useToast();
   const [modalShown, setModalShown] = useState(false);
+  const queryClient = useQueryClient();
   const { data } = useQuery({
     queryKey: ["company"],
     queryFn: getCompanyBranch,
     select: (data) => data.data,
+  });
+
+  const mutation = useMutation({
+    mutationFn: addCompanyBranch,
+    onSuccess: (response) => {
+      if (response.statusCode === 1) {
+        console.log(response);
+        queryClient.invalidateQueries(["company"]);
+        setModalShown(false);
+        toast.show("Successfully added", { type: "success" });
+      }else{
+        setModalShown(false);
+        toast.show(response.message,{type:'error'})
+      }
+    },
+  });
+
+  const modalClose = () => {
+    setModalShown(false);
+    branchFormik.resetForm();
+  };
+
+  const branchFormik = useFormik({
+    initialValues: {
+      officeName: "",
+      description: "",
+      officeCode: "",
+      address: "",
+      country: "",
+    },
+    validationSchema: Yup.object({
+      officeName: Yup.string().required("Enter office name"),
+      description: Yup.string().required("Enter office description"),
+      officeCode: Yup.string().required("Enter office code"),
+      address: Yup.string().required("Enter location"),
+      country: Yup.string().required("Enter country"),
+    }),
+    onSubmit: (values) => {
+      mutation.mutate(values);
+    },
   });
 
   const renderItem = ({ item }) => {
@@ -61,7 +104,10 @@ const Company = () => {
 
   return (
     <View style={styles.backgroundImage}>
-      <TouchableOpacity style={styles.addButton} onPress={()=>setModalShown(true)}>
+      <TouchableOpacity
+        style={styles.addButton}
+        onPress={() => setModalShown(true)}
+      >
         <Icon name="add" size={24} color="#fff" />
         <Text style={styles.addButtonText}>Add New Branch</Text>
       </TouchableOpacity>
@@ -79,32 +125,127 @@ const Company = () => {
       <Modal visible={modalShown} animationType="slide">
         <View style={styles.modalContainer}>
           <View style={styles.modalHeader}>
-            <Text style={styles.modalTitle}>Add Leave Type</Text>
-            <TouchableOpacity onPress={() => setModalShown(false)}>
+            <Text style={styles.modalTitle}>Add New Branch</Text>
+            <TouchableOpacity onPress={modalClose}>
               <FontAwesome name="close" size={24} color="#333" />
             </TouchableOpacity>
           </View>
           <View style={styles.modalBody}>
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: `${
+                    branchFormik.touched.officeName &&
+                    branchFormik.errors.officeName
+                      ? "red"
+                      : "#ccc"
+                  }`,
+                },
+              ]}
               placeholder="Office Name"
+              value={branchFormik.values.officeName}
+              onChangeText={branchFormik.handleChange("officeName")}
+              onBlur={branchFormik.handleBlur("officeName")}
             />
+            {branchFormik.touched.officeName &&
+              branchFormik.errors.officeName && (
+                <Text style={{ color: "red", marginLeft: 5 }}>
+                  {branchFormik.errors.officeName}
+                </Text>
+              )}
+
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: `${
+                    branchFormik.touched.officeCode &&
+                    branchFormik.errors.officeCode
+                      ? "red"
+                      : "#ccc"
+                  }`,
+                },
+              ]}
               placeholder="Office Code"
+              value={branchFormik.values.officeCode}
+              onChangeText={branchFormik.handleChange("officeCode")}
+              onBlur={branchFormik.handleBlur("officeCode")}
             />
+            {branchFormik.touched.officeCode &&
+              branchFormik.errors.officeCode && (
+                <Text style={{ color: "red", marginLeft: 5 }}>
+                  {branchFormik.errors.officeCode}
+                </Text>
+              )}
+
             <TextInput
-              style={styles.input}
-              placeholder="Address"
+              style={[
+                styles.input,
+                {
+                  borderColor: `${
+                    branchFormik.touched.address && branchFormik.errors.address
+                      ? "red"
+                      : "#ccc"
+                  }`,
+                },
+              ]}
+              placeholder="Location"
+              value={branchFormik.values.address}
+              onChangeText={branchFormik.handleChange("address")}
+              onBlur={branchFormik.handleBlur("address")}
             />
+            {branchFormik.touched.address && branchFormik.errors.address && (
+              <Text style={{ color: "red", marginLeft: 5 }}>
+                {branchFormik.errors.address}
+              </Text>
+            )}
+
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: `${
+                    branchFormik.touched.country && branchFormik.errors.country
+                      ? "red"
+                      : "#ccc"
+                  }`,
+                },
+              ]}
               placeholder="Country"
+              value={branchFormik.values.country}
+              onChangeText={branchFormik.handleChange("country")}
+              onBlur={branchFormik.handleBlur("country")}
             />
+            {branchFormik.touched.country && branchFormik.errors.country && (
+              <Text style={{ color: "red", marginLeft: 5 }}>
+                {branchFormik.errors.country}
+              </Text>
+            )}
+
             <TextInput
-              style={styles.input}
+              style={[
+                styles.input,
+                {
+                  borderColor: `${
+                    branchFormik.touched.description &&
+                    branchFormik.errors.description
+                      ? "red"
+                      : "#ccc"
+                  }`,
+                },
+              ]}
               placeholder="Description"
+              value={branchFormik.values.description}
+              onChangeText={branchFormik.handleChange("description")}
+              onBlur={branchFormik.handleBlur("description")}
             />
+            {branchFormik.touched.description &&
+              branchFormik.errors.description && (
+                <Text style={{ color: "red", marginLeft: 5 }}>
+                  {branchFormik.errors.description}
+                </Text>
+              )}
           </View>
           <View style={styles.modalFooter}>
             <TouchableOpacity
@@ -112,18 +253,18 @@ const Company = () => {
                 styles.modalButtons,
                 { backgroundColor: theme.colors.primary },
               ]}
+              onPress={branchFormik.handleSubmit}
             >
-              <Text style={styles.modalButtonText}>
-                Add Type
-              </Text>
+              <Text style={styles.modalButtonText}>Add Branch</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.modalButtons,
                 { backgroundColor: theme.colors.danger },
               ]}
+              onPress={modalClose}
             >
-              <Text style={styles.modalButtonText} onPress={()=>setModalShown(false)}>Cancel</Text>
+              <Text style={styles.modalButtonText}>Cancel</Text>
             </TouchableOpacity>
           </View>
         </View>
@@ -244,29 +385,29 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "#ccc",
+    // borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
-    marginBottom: 16,
+    marginTop: 16,
     backgroundColor: "#fff",
     color: "#333",
   },
   modalFooter: {
     flexDirection: "row",
-    justifyContent: 'space-between',
+    justifyContent: "space-between",
   },
-  modalButtons:{
+  modalButtons: {
     flex: 1,
     paddingVertical: 12,
     borderRadius: 6,
     marginHorizontal: 8,
   },
-  modalButtonText:{
+  modalButtonText: {
     color: theme.colors.white,
     textAlign: "center",
     fontWeight: "600",
-  }
+  },
 });
 
 export default Company;

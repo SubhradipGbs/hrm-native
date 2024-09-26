@@ -12,82 +12,96 @@ import {
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
-import {getClients} from '../../../services/api';
+import { addClient, getClients } from "../../../services/api";
 import { Entypo, FontAwesome } from "@expo/vector-icons";
+import { useMutation, useQuery } from "@tanstack/react-query";
+import { theme } from "@/constants/theme";
+import { useFormik } from "formik";
+import * as Yup from "yup";
+import { useToast } from "react-native-toast-notifications";
 
 const Clients = () => {
+  const toast = useToast()
   const [clientsData, setClientsData] = useState([]);
   const [modalVisible, setModalVisible] = useState(false);
-  const [newClient, setNewClient] = useState({
-    clientCode: "",
-    clientName: "",
-    clientAddress: "",
-    clientEmailId: "",
+
+  
+
+  const { data } = useQuery({
+    queryFn: getClients,
+    queryKey: ["clients"],
+    select: (data) => data.data,
   });
 
-  useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await getClients();
-        setClientsData(response.data);
-      } catch (error) {
-        console.error("Error fetching data:", error);
+  const mutation=useMutation({
+    mutationKey:['clients'],
+    mutationFn:addClient,
+    onSuccess:(response)=>{
+      if(response.statusCode === 1){
+        setModalVisible(false);
+        formik.resetForm();
+        toast.show(response.message,{type:'success'});
+      }else{
+        setModalVisible(false);
+        formik.resetForm();
+        toast.show(response.message,{type:'error'});
       }
-    };
-    fetchData();
-  }, []);
+    }
+  })
 
-  const handleModalOpen = () => {
-    setModalVisible(true);
-  };
-
-  const handleModalClose = () => {
-    setModalVisible(false);
-    setNewClient({
+  const formik = useFormik({
+    initialValues: {
       clientCode: "",
       clientName: "",
       clientAddress: "",
       clientEmailId: "",
-    });
+    },
+    validationSchema: Yup.object({
+      clientCode: Yup.string().required("Enter client code"),
+      clientName: Yup.string().required("Enter client name"),
+      clientAddress: Yup.string().required("Enter client location"),
+      clientEmailId: Yup.string()
+        .required("Enter client email")
+        .email("Enter valid email"),
+    }),
+    onSubmit: (values) => {
+      mutation.mutate(values);
+    },
+  });
+
+  const handleModalOpen = () => {
+    setModalVisible(true);
+    formik.resetForm();
   };
 
-  const handleInputChange = (name, value) => {
-    setNewClient({ ...newClient, [name]: value });
-  };
-
-  const handleAddClient = async () => {
-    try {
-      const response = await addClient(newClient);
-      setClientsData([...clientsData, response.data]);
-      handleModalClose();
-    } catch (error) {
-      console.error("Error adding client:", error);
-    }
+  const handleModalClose = () => {
+    setModalVisible(false);
   };
 
   const renderItem = ({ item }) => (
-    <View style={styles.companyItem}>
-      <View style={styles.headerContainer}>
-        <View style={styles.titleContainer}>
-          <Icon name="account-group" size={25} color="#333" />
-          <Text style={styles.clientName}>{item.clientName}</Text>
-        </View>
-        <Text style={styles.clientCode}>{item.clientCode}</Text>
+    <View style={styles.cardContainer}>
+      <View style={styles.header}>
+        <Text style={styles.clientCode}>Code: {item.clientCode}</Text>
+        <Text style={styles.clientName}>{item.clientName}</Text>
       </View>
-      <View style={styles.addressContainer}>
-        <FontAwesome name="map-marker" size={18} color="gray" />
-        <Text style={styles.clientAddress}>{item.clientAddress}</Text>
-      </View>
-      <View style={styles.addressContainer}>
-        <Entypo name="email" color="gray" />
-        <Text style={styles.clientEmail}>{item.clientEmailId}</Text>
-      </View>
-      <Text style={styles.projectsTitle}>Projects:</Text>
-      {item.projects.map((project) => (
-        <Text key={project._id} style={styles.projectName}>
-          - {project.projectName}
-        </Text>
-      ))}
+      <Text style={styles.clientAddress}>Location: {item.clientAddress}</Text>
+      <Text style={styles.clientEmail}>Email: {item.clientEmailId}</Text>
+      <Text style={styles.projectHeader}>Projects:</Text>
+      <FlatList
+        data={item.projects}
+        keyExtractor={(item) => item._id}
+        renderItem={({ item }) => (
+          <View style={styles.projectContainer}>
+            <Text style={styles.projectCode}>{item.projectCode}</Text>
+            <Text style={styles.projectName}>{item.projectName}</Text>
+          </View>
+        )}
+        ListEmptyComponent={()=>(
+          <View style={styles.projectContainer}>
+            <Text style={styles.projectName}>No projects</Text>
+          </View>
+        )}
+      />
     </View>
   );
 
@@ -98,7 +112,7 @@ const Clients = () => {
         <Text style={styles.addButtonText}>Add New Client</Text>
       </TouchableOpacity>
       <FlatList
-        data={clientsData}
+        data={data}
         renderItem={renderItem}
         keyExtractor={(item) => item._id.toString()}
         contentContainerStyle={styles.listContainer}
@@ -113,33 +127,60 @@ const Clients = () => {
           </View>
           <View style={styles.modalBody}>
             <TextInput
-              style={styles.input}
+              style={[styles.input,{borderColor:`${formik.touched.clientCode && formik.errors.clientCode ? 'red':'#ccc'}`}]}
               placeholder="Client Code"
-              onChangeText={(text) => handleInputChange("clientCode", text)}
-              value={newClient.clientCode}
+              value={formik.values.clientCode}
+              onChangeText={formik.handleChange("clientCode")}
+              onBlur={formik.handleBlur("clientCode")}
             />
+            {formik.touched.clientCode && formik.errors.clientCode && <Text style={{color:'red',marginLeft:5}}>{formik.errors.clientCode}</Text>}
             <TextInput
-              style={styles.input}
+              style={[styles.input,{borderColor:`${formik.touched.clientName && formik.errors.clientName ? 'red':'#ccc'}`}]}
               placeholder="Client Name"
-              onChangeText={(text) => handleInputChange("clientName", text)}
-              value={newClient.clientName}
+              value={formik.values.clientName}
+              onChangeText={formik.handleChange("clientName")}
+              onBlur={formik.handleBlur("clientName")}
             />
+            {formik.touched.clientName && formik.errors.clientName && <Text style={{color:'red',marginLeft:5}}>{formik.errors.clientName}</Text>}
+
             <TextInput
-              style={styles.input}
+              style={[styles.input,{borderColor:`${formik.touched.clientAddress && formik.errors.clientAddress?'red':'#ccc'}`}]}
               placeholder="Client Address"
-              onChangeText={(text) => handleInputChange("clientAddress", text)}
-              value={newClient.clientAddress}
+              value={formik.values.clientAddress}
+              onChangeText={formik.handleChange("clientAddress")}
+              onBlur={formik.handleBlur("clientAddress")}
             />
+            {formik.touched.clientAddress && formik.errors.clientAddress && <Text style={{color:'red',marginLeft:5}}>{formik.errors.clientAddress}</Text>}
+
             <TextInput
-              style={styles.input}
+              style={[styles.input,{borderColor:`${formik.touched.clientEmailId && formik.errors.clientEmailId ? 'red':'#ccc'}`}]}
               placeholder="Client Email ID"
-              onChangeText={(text) => handleInputChange("clientEmailId", text)}
-              value={newClient.clientEmailId}
+              value={formik.values.clientEmailId}
+              onChangeText={formik.handleChange("clientEmailId")}
+              onBlur={formik.handleBlur("clientEmailId")}
             />
+            {formik.touched.clientEmailId && formik.errors.clientEmailId && <Text style={{color:'red',marginLeft:5}}>{formik.errors.clientEmailId}</Text>}
+
           </View>
           <View style={styles.modalFooter}>
-            <Button title="Add Client" onPress={handleAddClient} color="#333" />
-            <Button title="Cancel" onPress={handleModalClose} color="#333" />
+            <TouchableOpacity
+              style={[
+                styles.modalButtons,
+                { backgroundColor: theme.colors.primary },
+              ]}
+              onPress={formik.handleSubmit}
+            >
+              <Text style={styles.modalButtonText}>Add Client</Text>
+            </TouchableOpacity>
+            <TouchableOpacity
+              style={[
+                styles.modalButtons,
+                { backgroundColor: theme.colors.danger },
+              ]}
+              onPress={handleModalClose}
+            >
+              <Text style={styles.modalButtonText}>Cancel</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </Modal>
@@ -168,65 +209,71 @@ const styles = StyleSheet.create({
     marginLeft: 8,
   },
   listContainer: {
-    paddingHorizontal: 16,
+    paddingBottom: 16,
   },
-  companyItem: {
-    backgroundColor: "#fff",
+  cardContainer: {
+    backgroundColor: '#ffffff',
+    borderRadius: 10,
     padding: 16,
-    borderRadius: 8,
-    marginBottom: 16,
-    shadowColor: "#000",
-    shadowOffset: {
-      width: 0,
-      height: 2,
-    },
-    shadowOpacity: 0.25,
-    shadowRadius: 3.84,
+    marginVertical: 10,
+    marginHorizontal: 16,
     elevation: 5,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 10,
+    shadowOffset: { width: 0, height: 4 },
   },
-  headerContainer: {
-    flexDirection: "row",
-    justifyContent: "space-between",
-    alignItems: "center",
+  header: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
     marginBottom: 10,
   },
-  titleContainer: {
-    flexDirection: "row",
-    alignItems: "center",
+  clientCode: {
+    fontSize: 14,
+    color: '#888',
+    fontWeight: 'bold',
   },
   clientName: {
     fontSize: 18,
-    fontWeight: "bold",
-    color: "#333",
-    marginLeft: 8,
-  },
-  clientCode: {
-    fontSize: 16,
-    color: "#666",
-    marginBottom: 4,
+    fontWeight: 'bold',
+    color: '#333',
   },
   clientAddress: {
-    fontSize: 16,
-    color: "gray",
+    alignItems:'center',
+    fontSize: 14,
+    color: '#666',
     marginBottom: 4,
   },
   clientEmail: {
-    fontSize: 16,
-    color: "gray",
+    fontSize: 14,
+    color: '#666',
     marginBottom: 8,
+    alignItems:'center',
   },
-  projectsTitle: {
+  projectHeader: {
     fontSize: 16,
-    fontWeight: "bold",
-    color: "#333",
-    marginTop:10,
+    fontWeight: 'bold',
+    marginTop: 8,
     marginBottom: 4,
-    marginLeft: 5,
+    color: '#333',
+  },
+  projectContainer: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    backgroundColor: '#f9f9f9',
+    padding: 8,
+    borderRadius: 5,
+    marginBottom: 5,
+  },
+  projectCode: {
+    fontSize: 14,
+    fontWeight: 'bold',
+    color: '#444',
   },
   projectName: {
-    fontSize: 16,
-    color: "#666",
-    marginLeft: 10,
+    fontSize: 14,
+    color: '#666',
   },
   modalContainer: {
     flex: 1,
@@ -252,17 +299,28 @@ const styles = StyleSheet.create({
   },
   input: {
     height: 40,
-    borderColor: "#ccc",
+    // borderColor: "#ccc",
     borderWidth: 1,
     borderRadius: 8,
     paddingHorizontal: 8,
-    marginBottom: 16,
+    marginTop: 16,
     backgroundColor: "#fff",
     color: "#333",
   },
   modalFooter: {
     flexDirection: "row",
     justifyContent: "flex-end",
+  },
+  modalButtons: {
+    flex: 1,
+    paddingVertical: 12,
+    borderRadius: 6,
+    marginHorizontal: 8,
+  },
+  modalButtonText: {
+    color: theme.colors.white,
+    textAlign: "center",
+    fontWeight: "600",
   },
   addressContainer: {
     flexDirection: "row",

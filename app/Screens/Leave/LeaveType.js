@@ -1,5 +1,5 @@
-import { View, Text, StyleSheet, Touchable, TouchableOpacity, Modal, TextInput, Button } from "react-native";
-import React, { useEffect, useState } from "react";
+import { View, Text, StyleSheet, TouchableOpacity, Modal, TextInput } from "react-native";
+import React, { useState } from "react";
 import { FlatList } from "react-native-gesture-handler";
 import { theme } from "@/constants/theme";
 import { addLeaveType, fetchLeaveType } from "@/services/api";
@@ -8,7 +8,6 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useToast } from "react-native-toast-notifications";
 
 const LeaveType = () => {
-  const [leaves, setLeaves] = useState([]);
   const queryClient=useQueryClient();
   const toast=useToast();
   const [modalShown,setModalShown]=useState(false);

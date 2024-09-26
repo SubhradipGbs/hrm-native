@@ -1,5 +1,6 @@
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useState } from "react";
+
 import {
   View,
   Text,
@@ -9,12 +10,14 @@ import {
   ImageBackground,
   Image,
 } from "react-native";
+
 import {
   login,
   setToken,
   getUserDetails,
   getSideMenu,
 } from "../../../services/api";
+
 import backgroundImg from "@/assets/images/background.png";
 
 const Login = ({ navigation }) => {

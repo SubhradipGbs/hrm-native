@@ -57,7 +57,7 @@ const MyStack = ({ route }) => {
       <Stack.Screen
         name="/masters"
         component={Masters}
-        options={{ title: "Masters" }}
+        options={{ title: "Masters", headerShown:false }}
       />
       <Stack.Screen
         name="/projects"

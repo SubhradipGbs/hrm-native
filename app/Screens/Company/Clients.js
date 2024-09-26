@@ -7,13 +7,11 @@ import {
   SafeAreaView,
   TouchableOpacity,
   Modal,
-  Button,
   TextInput,
 } from "react-native";
 import Icon from "react-native-vector-icons/MaterialCommunityIcons";
 
 import { addClient, getClients } from "../../../services/api";
-import { Entypo, FontAwesome } from "@expo/vector-icons";
 import { useMutation, useQuery } from "@tanstack/react-query";
 import { theme } from "@/constants/theme";
 import { useFormik } from "formik";
@@ -21,11 +19,8 @@ import * as Yup from "yup";
 import { useToast } from "react-native-toast-notifications";
 
 const Clients = () => {
-  const toast = useToast()
-  const [clientsData, setClientsData] = useState([]);
+  const toast = useToast();
   const [modalVisible, setModalVisible] = useState(false);
-
-  
 
   const { data } = useQuery({
     queryFn: getClients,

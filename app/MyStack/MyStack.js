@@ -11,6 +11,7 @@ import Masters from "@/app/Screens/Company/Masters";
 import Projects from "@/app/Screens/Time/Projects";
 import Timesheet from "@/app/Screens/Time/Timesheet";
 import ViewTimesheet from "@/app/Screens/Time/ViewTimesheet";
+import ExpenseReport from "@/app/Screens/Expense/ExpenseReport";
 
 const Stack = createNativeStackNavigator();
 
@@ -73,6 +74,11 @@ const MyStack = ({ route }) => {
         name="/view-timesheet"
         component={ViewTimesheet}
         options={{ title: "Projects" }}
+      />
+      <Stack.Screen
+        name="/expense-report"
+        component={ExpenseReport}
+        options={{ title: "Expense" }}
       />
     </Stack.Navigator>
   );

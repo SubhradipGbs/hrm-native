@@ -117,6 +117,36 @@ const getcompanyData = async () => {
   }
 };
 
+const addDepartment = async (obj) => {
+  try {
+    const response = await api.post("/department/create-new", obj);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding data:", error);
+  }
+};
+
+const editDepartment = async (data) => {
+  const { obj, id } = data;
+  try {
+    const url = `/department/update/${id}`;
+    const response = await api.post(url, obj);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding data:", error);
+  }
+};
+
+const deleteDepartment = async (id) => {
+  try {
+    const response = await api.delete("/department/del-dpt", { dptId: id });
+    console.log(response.data);
+    return response.data;
+  } catch (error) {
+    console.error("Error adding data:", error);
+  }
+};
+
 const geteducationData = async () => {
   try {
     const response = await api.get("/users/educations/all", {});
@@ -294,6 +324,9 @@ export {
   getCompanyBranch,
   addCompanyBranch,
   getcompanyData,
+  addDepartment,
+  editDepartment,
+  deleteDepartment,
   geteducationData,
   getLanguageData,
   getLeaveData,

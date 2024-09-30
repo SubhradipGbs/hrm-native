@@ -109,7 +109,7 @@ const Company = () => {
         onPress={() => setModalShown(true)}
       >
         <Icon name="add" size={24} color="#fff" />
-        <Text style={styles.addButtonText}>Add New Branch</Text>
+        <Text style={styles.addButtonText}>New Branch</Text>
       </TouchableOpacity>
       <FlatList
         data={data}

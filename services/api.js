@@ -147,6 +147,24 @@ const deleteDepartment = async (id) => {
   }
 };
 
+const getSkills=async()=>{
+  try{
+    const response= await api.get('/users/skils/all',{});
+    return response.data;
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const addSkill=async(obj)=>{
+  try{
+    const response= await api.post('/users/skils/create-new',obj);
+    return response.data;
+  }catch(err){
+    console.log(err);
+  }
+}
+
 const geteducationData = async () => {
   try {
     const response = await api.get("/users/educations/all", {});
@@ -279,7 +297,6 @@ const getMyexpense = async () => {
       userId: userId,
     });
     return response.data;
-    // setData(response.data.data);
   } catch (error) {
     console.error("Error fetching data:", error);
   }
@@ -327,6 +344,8 @@ export {
   addDepartment,
   editDepartment,
   deleteDepartment,
+  getSkills,
+  addSkill,
   geteducationData,
   getLanguageData,
   getLeaveData,

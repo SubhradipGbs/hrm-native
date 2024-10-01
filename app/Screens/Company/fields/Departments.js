@@ -276,28 +276,28 @@ const styles = StyleSheet.create({
     marginVertical: 8,
     marginHorizontal: 16,
     borderRadius: 12,
-    elevation: 4, // Subtle shadow for better card elevation on mobile
+    elevation: 4, 
     shadowColor: "#000",
     shadowOpacity: 0.1,
     shadowRadius: 10,
     shadowOffset: { width: 0, height: 4 },
   },
   iconContainer: {
-    padding: 8, // Add padding around the icon for a balanced look
-    backgroundColor: "#E8F5E9", // Light green background to enhance the department icon
-    borderRadius: 40, // Rounded background to match icon size
+    padding: 8, 
+    backgroundColor: "#E8F5E9",
+    borderRadius: 40, 
     marginRight: 16,
   },
   infoContainer: {
     flex: 1,
   },
   departmentName: {
-    fontSize: 18, // Larger font size for better readability
+    fontSize: 18,
     fontWeight: "bold",
     color: "#333",
   },
   departmentId: {
-    fontSize: 14, // Slightly larger and more readable font size
+    fontSize: 14,
     color: "#666",
     marginTop: 4,
   },
@@ -306,7 +306,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
   },
   actionIcon: {
-    marginLeft: 20, // Spacing between the action buttons
+    marginLeft: 20, 
   },
   addButton: {
     flexDirection: "row",

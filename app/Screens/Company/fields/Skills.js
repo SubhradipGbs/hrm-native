@@ -44,14 +44,24 @@ const Skills = () => {
     queryFn: getSkills,
     select: (data) => data?.data,
   });
+
   const mutation = useMutation({
     mutationFn: addSkill,
     onSuccess: (response) => {
       if (response.statusCode === 1) {
+        setShowModal(false);
+        formik.resetForm();
         toast.show("Added Successfully", { type: "success" });
+      }else{
+        console.log(response);
       }
     },
   });
+
+  const closeModal=()=>{
+    setShowModal(false);
+    formik.resetForm();
+  }
 
   const formik = useFormik({
     initialValues: {
@@ -65,7 +75,7 @@ const Skills = () => {
       description: Yup.string(),
     }),
     onSubmit: (values) => {
-      console.log(values);
+      mutation.mutate(values);
     },
   });
   return (
@@ -164,14 +174,14 @@ const Skills = () => {
                 },
               ]}
             >
-              <Text style={styles.modalButtonText}>Add Skill</Text>
+              <Text style={styles.modalButtonText} onPress={formik.handleSubmit}>Add Skill</Text>
             </TouchableOpacity>
             <TouchableOpacity
               style={[
                 styles.modalButtons,
                 { backgroundColor: theme.colors.danger },
               ]}
-              onPress={() => setShowModal(false)}
+              onPress={closeModal}
             >
               <Text style={styles.modalButtonText}>Cancel</Text>
             </TouchableOpacity>

@@ -29,7 +29,7 @@ const ExpenseCard = ({ item, onApprove, onReject }) => {
           <TouchableOpacity>
             <AntDesign
               name="infocirlceo"
-              size={24}
+              size={20}
               color={theme.colors.nutral}
             />
           </TouchableOpacity>

@@ -174,14 +174,50 @@ const geteducationData = async () => {
   }
 };
 
-const getLanguageData = async () => {
+const addEducation=async(obj)=>{
+  try{
+    const response= await api.post('/users/educations/create-new',obj);
+    return response.data;
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const getCertificates = async () => {
   try {
-    const response = await api.get("/users/language/get-all", {});
-    setLanguage(response.data);
+    const response = await api.get("/users/certifications/get-all", {});
+    return response.data;
   } catch (error) {
     console.error("Error fetching data:", error);
   }
 };
+
+const addCertificate=async(obj)=>{
+  try{
+    const response= await api.post('/users/educations/create-new',obj);
+    return response.data;
+  }catch(err){
+    console.log(err);
+  }
+}
+
+const getLanguageData = async () => {
+  try {
+    const response = await api.get("/users/language/get-all", {});
+    return response.data;
+  } catch (error) {
+    console.error("Error fetching data:", error);
+  }
+};
+
+const addLanguage=async(obj)=>{
+  try{
+    const response= await api.post('/users/language/create-new',obj);
+    return response.data;
+  }catch(err){
+    console.log(err);
+  }
+}
 
 const getLeaveData = async () => {
   try {
@@ -347,7 +383,11 @@ export {
   getSkills,
   addSkill,
   geteducationData,
+  addEducation,
+  getCertificates,
+  addCertificate,
   getLanguageData,
+  addLanguage,
   getLeaveData,
   fetchLeaveType,
   getLeaveStatus,

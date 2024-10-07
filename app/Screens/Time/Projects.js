@@ -62,33 +62,24 @@ const Projects = () => {
     setModalVisible(!modalVisible);
   };
 
-  const ProjectCard = ({ item, toggleModal }) => {
+  const ProjectCard = ({ item }) => {
     return (
       <TouchableOpacity
         style={styles.card}
-        activeOpacity={0.8}
+        activeOpacity={0.7}
         onPress={() => toggleModal(item)}
       >
-        <View style={styles.cardContent}>
-          <View style={styles.cardDetails}>
-            <Text style={styles.cardTitle}>{item.projectName}</Text>
+        <View style={styles.infoContainer}>
+        {/* Project Icon */}
+        <FontAwesome name="folder-open" size={40} color={theme.colors.primary} style={styles.projectIcon} />
 
-            <View style={styles.infoRow}>
-              <FontAwesome name="code" size={16} color={theme.colors.gray} />
-              <Text style={styles.cardText}>
-                Project Code: {item.projectCode}
-              </Text>
-            </View>
-            <View style={styles.infoRow}>
-              <FontAwesome name="building" size={16} color={theme.colors.gray} />
-              <Text style={styles.cardText}>
-                Department: {item.departments.dptName}
-              </Text>
-            </View>
-          </View>
-
-          <Icon name="chevron-right" size={28} color="#4F8EF7" />
+        {/* Project Details */}
+        <View style={styles.textContainer}>
+          <Text style={styles.projectName}>{item.projectName}</Text>
+          <Text style={styles.projectCode}>Code: {item.projectCode}</Text>
+          <Text style={styles.departmentName}>Department: {item.departments?.dptName}</Text>
         </View>
+      </View>
       </TouchableOpacity>
     );
   };
@@ -102,32 +93,7 @@ const Projects = () => {
         onChangeText={setSearchQuery}
         placeholderTextColor="#999"
       />
-      {/* {filteredData.length === 0 ? (
-        <Text style={styles.emptyText}>No projects found</Text>
-      ) : (
-        <ScrollView contentContainerStyle={styles.scrollContainer}>
-          {filteredData.map((item, index) => (
-            <TouchableOpacity
-              key={index}
-              style={styles.card}
-              onPress={() => toggleModal(item)}
-            >
-              <View style={styles.cardContent}>
-                <View style={styles.cardDetails}>
-                  <Text style={styles.cardTitle}>{item.projectName}</Text>
-                  <Text style={styles.cardText}>
-                    Project Code: {item.projectCode}
-                  </Text>
-                  <Text style={styles.cardText}>
-                    Department: {item.departments.dptName}
-                  </Text>
-                </View>
-                <Icon name="chevron-right" size={24} color="#333" />
-              </View>
-            </TouchableOpacity>
-          ))}
-        </ScrollView>
-      )} */}
+      
 
       <FlatList
         data={filteredData}
@@ -138,8 +104,7 @@ const Projects = () => {
 
       <Modal
         visible={modalVisible}
-        onRequestClose={toggleModal}
-        transparent
+        onRequestClose={()=>{setModalVisible(false)}}
         animationType="slide"
       >
         <View style={styles.modalContainer}>
@@ -161,7 +126,7 @@ const Projects = () => {
                         Department ID: {getProjectdata.departments.dptId}
                       </Text>
                       <Text style={styles.sectionTitle}>
-                        Department Name: {getProjectdata.departments.dptName}
+                        Department Name: {getProjectdata.departments?.dptName}
                       </Text>
                     </View>
                   ) : (
@@ -202,7 +167,7 @@ const Projects = () => {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
+    gap:5,
   },
   searchInput: {
     height: 40,
@@ -210,52 +175,49 @@ const styles = StyleSheet.create({
     borderColor: "#ccc",
     borderRadius: 4,
     paddingHorizontal: 10,
-    marginBottom: 16,
+    margin:10,
     backgroundColor: theme.colors.white,
   },
   card: {
-    backgroundColor: "#fff",
+    backgroundColor: '#fff',
     borderRadius: 12,
     padding: 16,
-    marginVertical: 5,
-    marginHorizontal: 5,
-    shadowColor: "#000",
-    shadowOffset: { width: 0, height: 2 },
-    shadowOpacity: 0.15,
-    shadowRadius: 6,
-    elevation: 5,
+    marginHorizontal: 10,
+    elevation: 3,
+    shadowColor: '#000',
+    shadowOpacity: 0.1,
+    shadowRadius: 5,
+    shadowOffset: { width: 0, height: 4 },
   },
-  cardContent: {
-    flexDirection: "row",
-    alignItems: "center",
-    justifyContent: "space-between",
+  
+  infoContainer: {
+    flexDirection: 'row',
+    alignItems: 'center',
   },
-  cardDetails: {
+  projectIcon: {
+    marginRight: 16,
+  },
+  textContainer: {
     flex: 1,
-    marginRight: 10,
   },
-  cardTitle: {
+  projectName: {
     fontSize: 18,
-    fontWeight: "600",
-    color: "#333",
-    marginBottom: 8,
+    fontWeight: 'bold',
+    color: theme.colors.primary,
   },
-  infoRow: {
-    flexDirection: "row",
-    alignItems: "center",
-    marginBottom: 4,
-  },
-  cardText: {
+  projectCode: {
     fontSize: 14,
-    color: "#666",
-    marginLeft: 8,
+    color: theme.colors.gray,
+    marginTop: 4,
   },
+  departmentName: {
+    fontSize: 14,
+    color: theme.colors.gray,
+    marginTop: 4,
+  },
+  
   modalContainer: {
     flex: 1,
-    flexDirection: "row",
-    justifyContent: "center",
-    alignItems: "center",
-    // backgroundColor: 'rgba(0, 0, 0, 0.5)',
   },
   modalContent: {
     flex: 1,

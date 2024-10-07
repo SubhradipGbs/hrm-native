@@ -7,8 +7,11 @@ import {
   TextInput,
   TouchableOpacity,
 } from "react-native";
+import * as FileSystem from "expo-file-system";
 import Icon from "react-native-vector-icons/FontAwesome";
 import { getEmployeeDetails } from "../../../services/api";
+import Papa from 'papaparse';
+import { shareAsync } from "expo-sharing";
 
 const EmployeeReport = () => {
   const [data, setData] = useState([]);
@@ -40,12 +43,49 @@ const EmployeeReport = () => {
     const downloadData = filteredData;
   };
 
+  const flattenData = (data) => {
+    return data.map((item) => ({
+      employee_code: item.ceId,
+      first_name: item.fName,
+      middle_name: item.mName,
+      last_name: item.lName,
+      department: item.department?.dptName,
+      designation: item.designation,
+      nationality: item.nationality,
+      dob: item.dob,
+      gender: item.gender,
+      marital_status: item.maritalStatus,
+      mobile_number: item.userMobileNo,
+      email: item.email,
+      aadhaar_number: item.aaddharNo,
+      pan_no: item.panNo,
+      bank_name: item.bankName,
+      ifsc_code: item.ifscCode,
+      account_no: item.bnkacuntNo,
+    }));
+  };
+
   const formatDate = (dateString) => {
     const date = new Date(dateString);
     const day = date.getDate().toString().padStart(2, "0");
     const month = (date.getMonth() + 1).toString().padStart(2, "0");
     const year = date.getFullYear();
     return `${day}-${month}-${year}`;
+  };
+
+  const save = (uri)=>{
+    shareAsync(uri);
+  }
+  const handleDownload = async () => {
+    try {
+      const flatData = flattenData(filteredData);
+      const csv = Papa.unparse(flatData);
+      const fileUri = FileSystem.documentDirectory + "employees.csv";
+      await FileSystem.writeAsStringAsync(fileUri, csv, { encoding: FileSystem.EncodingType.UTF8 });
+      save(fileUri);
+    } catch (err) {
+      console.log("Error:", err);
+    }
   };
 
   const renderItem = ({ item }) => (
@@ -69,9 +109,7 @@ const EmployeeReport = () => {
             color="#666"
             style={styles.dobIcon}
           />
-          <Text style={styles.dobText}>
-            Date of Birth:
-          </Text>
+          <Text style={styles.dobText}>Date of Birth:</Text>
           <Text>{formatDate(item.dob)}</Text>
         </View>
 
@@ -82,9 +120,7 @@ const EmployeeReport = () => {
         </View>
         <View style={styles.dobContainer}>
           <Icon name="id-card" size={18} color="#666" style={styles.dobIcon} />
-          <Text style={styles.dobText}>
-            Aadhaar No:
-          </Text>
+          <Text style={styles.dobText}>Aadhaar No:</Text>
           <Text>{item.aaddharNo || "N/A"}</Text>
         </View>
         {/* <Text>{`${item.parmanentAddress}`}</Text>
@@ -109,7 +145,7 @@ const EmployeeReport = () => {
         keyExtractor={(item) => item._id.toString()}
       />
       <TouchableOpacity
-        onPress={handleDownloadAll}
+        onPress={handleDownload}
         style={styles.downloadAllButton}
       >
         <Text style={styles.downloadAllButtonText}>Download All</Text>
@@ -176,7 +212,7 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     alignItems: "center",
     marginBottom: 8,
-    gap:10,
+    gap: 10,
   },
   dobIcon: {
     marginRight: 8,

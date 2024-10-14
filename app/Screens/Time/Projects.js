@@ -231,9 +231,7 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     backgroundColor: "#2196F3",
-    padding: 16,
-    // borderTopLeftRadius: 10,
-    // borderTopRightRadius: 10,
+    padding: 16
   },
   modalTitle: {
     fontSize: 20,
